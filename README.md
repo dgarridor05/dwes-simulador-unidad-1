@@ -207,8 +207,13 @@ examenPHP/
 ├── index.html                   # Interfaz de usuario (HTML5 semántico, accesibilidad)
 ├── styles.css                   # Sistema de diseño (Dark/Light tokens, glassmorphism, responsive)
 ├── app.js                       # Controlador SPA, Web Audio API, persistencia y lógica evaluadora
-├── questions.js                 # Banco oficial de 94 preguntas exhaustivas línea por línea
-├── 1_1_DWES_ArquitecturasWeb.pdf# Documento curricular oficial de referencia (20 páginas)
+├── questions.js                 # Banco oficial de 147 preguntas exhaustivas línea por línea (UTF-8)
+├── sw.js                        # Service Worker PWA (Cache-First offline v4)
+├── manifest.json                # Manifiesto de PWA para instalación de la aplicación
+├── MAPA_PROYECTO.md             # Mapeado integral de arquitectura, bloques temáticos y codificación
+├── 1_1_DWES_ArquitecturasWeb.pdf# Documento curricular oficial de referencia 1 (20 páginas)
+├── Configuracion_XAMPP_inicial.pdf # Documento curricular oficial de referencia 2 (XAMPP y Apache)
+├── ConfigurarAccesos.pdf        # Documento curricular oficial de referencia 3 (Seguridad y Accesos)
 ├── .gitignore                   # Archivos ignorados por Git
 └── README.md                    # Documentación técnica completa del repositorio
 ```
