@@ -3,71 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Simulador de examen eliminatorio de DWES Unidad 1: Arquitecturas Web para ciclos formativos de DAW y DAM. Preguntas tipo test, casos trampa y explicaciones técnicas detalladas.">
-  <title>Simulador de Examen DWES - Unidad 1: Arquitecturas Web (DAW / DAM)</title>
+  <meta name="description" content="Simulador de examen eliminatorio de DWES Unidad 1: Arquitecturas Web para ciclos formativos de DAW y DAM. 94 preguntas extraídas línea por línea del temario oficial con tutor interactivo, simulacro oficial, flashcards y mapa de preguntas.">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='128' fill='%236366f1'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-weight='bold' font-size='190' fill='%23ffffff'%3EPHP%3C/text%3E%3C/svg%3E">
+  <title>Simulador DWES - Unidad 1: Arquitecturas Web (DAW / DAM)</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+  <!-- Región accesible para lectores de pantalla -->
+  <div id="srAnnouncement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
   <div class="app-container">
 
     <!-- Header Principal -->
     <header class="app-header">
       <div class="brand-wrapper">
-        <div class="brand-icon">PHP</div>
+        <div class="brand-icon" aria-hidden="true">PHP</div>
         <div class="brand-info">
           <h1>DWES | Unidad 1: Arquitecturas Web</h1>
           <p>
-            <span>Preparador Oficial DAW / DAM</span>
-            <span class="badge-tag">Simulador Test Eliminatorio</span>
+            <span>Preparador Oficial FP DAW / DAM</span>
+            <span class="badge-tag">94 Preguntas Línea por Línea</span>
           </p>
         </div>
       </div>
 
       <div class="header-controls">
         <!-- Indicador de Tiempo (Modo Examen) -->
-        <div id="timerDisplay" class="control-btn" style="display: none;">
+        <div id="timerDisplay" class="control-btn timer-badge" style="display: none;" title="Tiempo restante del simulacro">
           ⏱️ <span id="timeValue">45:00</span>
         </div>
 
+        <!-- Botón Mapa de Preguntas -->
+        <button id="toggleMapBtn" class="control-btn" title="Abrir mapa de preguntas para saltar directamente a cualquier casilla">
+          🗺️ Mapa (<span id="mapCurrentCount">94</span>)
+        </button>
+
         <!-- Botón de Sonido -->
-        <button id="toggleAudioBtn" class="control-btn" title="Activar/Desactivar Sonidos FX">
+        <button id="toggleAudioBtn" class="control-btn" title="Activar/Desactivar efectos de sonido FX">
           🔊 Sonido
         </button>
 
         <!-- Botón de Tema (Claro / Oscuro) -->
-        <button id="toggleThemeBtn" class="control-btn" title="Cambiar tema visual">
+        <button id="toggleThemeBtn" class="control-btn" title="Cambiar tema visual (Oscuro / Claro)">
           🌓 Tema
         </button>
 
         <!-- Botón Reiniciar Estadísticas -->
-        <button id="resetStatsBtn" class="control-btn" title="Reiniciar progreso">
+        <button id="resetStatsBtn" class="control-btn" title="Reiniciar progreso y bolsa de fallos">
           🔄 Reiniciar
         </button>
       </div>
     </header>
 
     <!-- Navegación de Modos -->
-    <nav class="mode-navigation" role="tablist">
-      <button class="mode-tab active" data-mode="tutor" id="tabTutor">
-        🎓 Modo Tutor (Feedback Inmediato)
+    <nav class="mode-navigation" role="tablist" aria-label="Modos de estudio">
+      <button class="mode-tab active" data-mode="tutor" id="tabTutor" role="tab" aria-selected="true">
+        🎓 Modo Tutor
       </button>
-      <button class="mode-tab" data-mode="exam" id="tabExam">
-        ⏱️ Modo Examen Oficial (Nota / 10)
+      <button class="mode-tab" data-mode="exam" id="tabExam" role="tab" aria-selected="false">
+        ⏱️ Modo Examen
       </button>
-      <button class="mode-tab" data-mode="traps" id="tabTraps">
-        ⚠️ Preguntas Trampa (Nivel Pro)
+      <button class="mode-tab" data-mode="traps" id="tabTraps" role="tab" aria-selected="false">
+        ⚠️ Preguntas Trampa
       </button>
-      <button class="mode-tab" data-mode="review" id="tabReview">
+      <button class="mode-tab" data-mode="review" id="tabReview" role="tab" aria-selected="false">
         🔁 Bolsa de Fallos (<span id="failedCountBadge">0</span>)
       </button>
-      <button class="mode-tab" data-mode="glossary" id="tabGlossary">
-        📖 Chuleta y Tablas del Tema
+      <button class="mode-tab" data-mode="flashcards" id="tabFlashcards" role="tab" aria-selected="false">
+        🎴 Flashcards
+      </button>
+      <button class="mode-tab" data-mode="survival" id="tabSurvival" role="tab" aria-selected="false">
+        ⚡ Muerte Súbita
+      </button>
+      <button class="mode-tab" data-mode="glossary" id="tabGlossary" role="tab" aria-selected="false">
+        📖 Chuleta del Tema
       </button>
     </nav>
 
-    <!-- Panel de Filtros (Disponible en modo Tutor y Examen) -->
-    <section class="filter-bar" id="filterBar">
+    <!-- Panel de Filtros y Búsqueda -->
+    <section class="filter-bar" id="filterBar" aria-label="Filtros de preguntas">
       <div class="filter-group">
         <span class="filter-label">Nivel:</span>
         <button class="chip-filter active" data-level="all">Todos (94)</button>
@@ -78,21 +97,26 @@
 
       <div class="filter-group">
         <span class="filter-label">Bloque:</span>
-        <select id="topicFilterSelect" class="chip-filter" style="padding-right: 1.5rem;">
+        <select id="topicFilterSelect" class="chip-filter select-filter" aria-label="Filtrar por bloque temático">
           <option value="all">Todos los Bloques (1 al 5)</option>
-          <option value="1">1. Páginas Estáticas, Dinámicas, SEO y SPA</option>
-          <option value="2">2. Aplicaciones Web, Capas y MVC</option>
-          <option value="3">3. Tecnologías de Servidor (Jakarta, AMP, CGI, etc.)</option>
-          <option value="4">4. Modelos de Ejecución de Lenguajes</option>
-          <option value="5">5. Entorno PHP, php.ini y XAMPP</option>
+          <option value="1">1. Páginas Estáticas, Dinámicas, SEO y SPA (Pág. 1-8)</option>
+          <option value="2">2. Aplicaciones Web, Capas y MVC (Pág. 8-10)</option>
+          <option value="3">3. Tecnologías de Servidor: Jakarta, AMP, CGI, ASP.NET (Pág. 10-15)</option>
+          <option value="4">4. Modelos de Ejecución de Lenguajes (Pág. 15-16)</option>
+          <option value="5">5. Entorno PHP, php.ini y XAMPP (Pág. 16-20)</option>
         </select>
+      </div>
+
+      <div class="filter-group search-group">
+        <span class="filter-label">Buscar:</span>
+        <input type="search" id="questionSearchInput" class="search-input" placeholder="🔍 Filtrar concepto (ej: WSGI, mod_php, MVC, EJB)..." aria-label="Buscar en el banco de preguntas">
       </div>
     </section>
 
     <!-- Panel de Estadísticas en Vivo -->
-    <section class="stats-banner" id="statsBanner">
+    <section class="stats-banner" id="statsBanner" aria-label="Estadísticas de sesión">
       <div class="stat-card">
-        <div class="stat-icon">📊</div>
+        <div class="stat-icon" aria-hidden="true">📊</div>
         <div class="stat-content">
           <div class="stat-label">Progreso Test</div>
           <div class="stat-value" id="statProgress">0 / 94</div>
@@ -100,15 +124,15 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon green">✅</div>
+        <div class="stat-icon green" aria-hidden="true">✅</div>
         <div class="stat-content">
-          <div class="stat-label">Aciertos</div>
+          <div class="stat-label">Aciertos (+1.00)</div>
           <div class="stat-value" id="statCorrect">0</div>
         </div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon red">❌</div>
+        <div class="stat-icon red" aria-hidden="true">❌</div>
         <div class="stat-content">
           <div class="stat-label">Fallos (-0.33)</div>
           <div class="stat-value" id="statWrong">0</div>
@@ -116,7 +140,7 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon yellow">🎯</div>
+        <div class="stat-icon yellow" aria-hidden="true">🎯</div>
         <div class="stat-content">
           <div class="stat-label">Nota Estimada</div>
           <div class="stat-value" id="statGrade">0.00 / 10</div>
@@ -128,9 +152,9 @@
     <div class="progress-container" id="progressBarContainer">
       <div class="progress-header">
         <span id="progressText">Completado: 0%</span>
-        <span id="questionCountText">Pregunta 1 de 40</span>
+        <span id="questionCountText">Pregunta 1 de 94</span>
       </div>
-      <div class="progress-track">
+      <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
         <div class="progress-fill" id="progressFill"></div>
       </div>
     </div>
@@ -145,9 +169,14 @@
             <span class="badge-topic" id="badgeTopic">Tema 1</span>
             <span class="badge-page" id="badgePage">Pág. 1-2</span>
           </div>
-          <button id="bookmarkQuestionBtn" class="control-btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
-            ⭐ Guardar duda
-          </button>
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="cardMapBtn" class="control-btn" style="padding: 0.35rem 0.65rem; font-size: 0.8rem;" title="Saltar a otra pregunta">
+              🗺️ Ir a...
+            </button>
+            <button id="bookmarkQuestionBtn" class="control-btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" title="Marcar como duda para revisar después">
+              ⭐ Guardar duda
+            </button>
+          </div>
         </div>
 
         <!-- Enunciado de la Pregunta -->
@@ -156,18 +185,14 @@
         </div>
 
         <!-- Opciones A, B, C, D -->
-        <div class="options-grid" id="optionsContainer">
+        <div class="options-grid" id="optionsContainer" role="radiogroup" aria-label="Opciones de respuesta">
           <!-- Generado dinámicamente -->
         </div>
 
-        <!-- Panel de Feedback Exclusivo del Profesor DWES -->
+        <!-- Panel de Feedback Exclusivo del Profesor DWES (Modo Tutor) -->
         <div class="explanation-card" id="explanationCard" style="display: none;">
-          <div class="explanation-title" id="explanationTitle">
-            <!-- Icono y título -->
-          </div>
-          <div class="explanation-text" id="explanationText">
-            <!-- Texto explicativo -->
-          </div>
+          <div class="explanation-title" id="explanationTitle"></div>
+          <div class="explanation-text" id="explanationText"></div>
           <div class="distractor-breakdown" id="distractorContainer">
             <div class="distractor-title">Análisis de los distractores (¿por qué fallan?):</div>
             <div id="distractorList"></div>
@@ -183,14 +208,18 @@
             ⬅️ Anterior
           </button>
           
-          <div style="display: flex; gap: 0.75rem;">
+          <div class="actions-right">
+            <!-- Botón de desmarcar (activo en examen para evitar penalización) -->
+            <button id="unselectBtn" class="action-btn btn-secondary" style="display: none;" title="Dejar en blanco para no restar puntos">
+              ⚪ Dejar en blanco
+            </button>
             <button id="skipBtn" class="action-btn btn-secondary">
               Saltar
             </button>
             <button id="nextBtn" class="action-btn btn-primary">
               Siguiente ➡️
             </button>
-            <button id="finishExamBtn" class="action-btn btn-primary" style="display: none; background: #10b981;">
+            <button id="finishExamBtn" class="action-btn btn-success" style="display: none;">
               🏁 Finalizar y Calificar
             </button>
           </div>
@@ -226,16 +255,131 @@
         </div>
       </div>
 
+      <!-- Radar / Desglose de Dominio por Bloques -->
+      <div class="topic-mastery-section">
+        <h3 class="topic-mastery-title">📊 Diagnóstico de Dominio por Bloques Temáticos</h3>
+        <div id="topicMasteryBars" class="topic-bars-list">
+          <!-- Generado dinámicamente -->
+        </div>
+        <div class="diagnosis-advice-box" id="diagnosisAdviceBox">
+          <!-- Recomendación personalizada -->
+        </div>
+      </div>
+
       <div class="results-actions">
-        <button id="restartExamBtn" class="action-btn btn-primary">
+        <button id="reviewFullExamBtn" class="action-btn btn-primary">
+          🔍 Revisar Examen Completo Pregunta a Pregunta
+        </button>
+        <button id="printReportBtn" class="action-btn btn-secondary">
+          📄 Imprimir / Guardar Informe PDF
+        </button>
+        <button id="restartExamBtn" class="action-btn btn-secondary">
           🔄 Repetir Examen
         </button>
         <button id="reviewFailedOnlyBtn" class="action-btn btn-secondary">
-          ❌ Repasar Solo los Fallos
+          ❌ Entrenar Solo los Fallos
         </button>
         <button id="backToTutorBtn" class="action-btn btn-secondary">
           🎓 Volver al Modo Tutor
         </button>
+      </div>
+    </section>
+
+    <!-- Vista de Revisión Detallada Post-Examen (Post-Mortem Review) -->
+    <section class="exam-review-view" id="examReviewView" style="display: none;">
+      <div class="exam-review-header">
+        <div>
+          <h2>🔍 Revisión Completa del Examen</h2>
+          <p style="color: var(--text-muted);">Comprueba cada pregunta, tu respuesta marcada, la solución correcta oficial y la justificación del temario.</p>
+        </div>
+        <button id="closeReviewViewBtn" class="action-btn btn-secondary">
+          ⬅️ Volver a Resumen de Nota
+        </button>
+      </div>
+
+      <div class="review-filters-bar">
+        <span>Filtrar revisión:</span>
+        <button class="chip-filter active" data-review-filter="all">Todas (<span id="revCountAll">94</span>)</button>
+        <button class="chip-filter" data-review-filter="wrong">❌ Solo Falladas (<span id="revCountWrong">0</span>)</button>
+        <button class="chip-filter" data-review-filter="blank">⚪ Solo en Blanco (<span id="revCountBlank">0</span>)</button>
+        <button class="chip-filter" data-review-filter="correct">✅ Solo Acertadas (<span id="revCountCorrect">0</span>)</button>
+      </div>
+
+      <div class="review-list-container" id="examReviewContainer">
+        <!-- Preguntas renderizadas con justificaciones completas -->
+      </div>
+    </section>
+
+    <!-- Vista de Modo Flashcards (Tarjetas de Memoria) -->
+    <section class="flashcards-view" id="flashcardsView" style="display: none;">
+      <div class="flashcards-header">
+        <h2>🎴 Flashcards de Repaso Activo: Unidad 1</h2>
+        <p style="color: var(--text-muted);">Pon a prueba tu retención de directivas, conceptos clave y acrónimos esenciales con repetición espaciada.</p>
+      </div>
+
+      <div class="flashcard-scene">
+        <div class="flashcard" id="flashcardElement" role="button" tabindex="0" title="Haz clic o pulsa Espacio para voltear">
+          <!-- Cara Frontal (Anverso) -->
+          <div class="flashcard-face flashcard-front">
+            <span class="flashcard-badge" id="cardTopicBadge">Tema 5: php.ini</span>
+            <div class="flashcard-prompt" id="cardPromptText">Concepto...</div>
+            <span class="flashcard-hint">🔄 Haz clic para ver la solución</span>
+          </div>
+          <!-- Cara Posterior (Reverso) -->
+          <div class="flashcard-face flashcard-back">
+            <span class="flashcard-badge back-badge" id="cardBackBadge">Solución Oficial</span>
+            <div class="flashcard-answer" id="cardAnswerText">Respuesta...</div>
+            <div class="flashcard-trap" id="cardTrapText"></div>
+            <span class="flashcard-page" id="cardPageText">Pág. X</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flashcard-controls">
+        <button id="fcPrevBtn" class="action-btn btn-secondary">⬅️ Anterior</button>
+        <button id="fcFlipBtn" class="action-btn btn-primary">🔄 Voltear Tarjeta (Espacio)</button>
+        <button id="fcNextBtn" class="action-btn btn-secondary">Siguiente ➡️</button>
+      </div>
+
+      <div class="flashcard-self-eval">
+        <span>Autoevaluación:</span>
+        <button id="fcMarkKnownBtn" class="action-btn btn-success" style="padding: 0.5rem 1rem;">✅ Me lo sé bien (+1)</button>
+        <button id="fcMarkReviewBtn" class="action-btn btn-danger" style="padding: 0.5rem 1rem;">🔄 Tengo que repasarlo</button>
+      </div>
+
+      <div class="flashcard-stats-footer">
+        <span id="fcCardCount">Tarjeta 1 de 25</span> | 
+        <span id="fcKnownCount" style="color: var(--success-text);">Dominadas: 0</span> | 
+        <span id="fcReviewCount" style="color: var(--danger-text);">Por repasar: 0</span>
+      </div>
+    </section>
+
+    <!-- Vista de Muerte Súbita (Survival Challenge) -->
+    <section class="survival-view" id="survivalView" style="display: none;">
+      <div class="survival-header">
+        <div class="survival-badge">⚡ MODO MUERTE SÚBITA</div>
+        <h2>Desafío Contrarreloj: 15 Segundos por Pregunta</h2>
+        <p style="color: var(--text-muted);">Responde sin equivocarte. El primer fallo termina la partida. ¿Cuánto aguantarás?</p>
+      </div>
+
+      <div class="survival-score-bar">
+        <div class="survival-stat">
+          <span class="stat-label">Racha Actual</span>
+          <span class="stat-value" id="survivalCurrentStreak" style="color: var(--accent-cyan);">0</span>
+        </div>
+        <div class="survival-timer-gauge">
+          <div class="survival-timer-bar" id="survivalTimerBar"></div>
+          <span class="survival-seconds" id="survivalSecondsText">15s</span>
+        </div>
+        <div class="survival-stat">
+          <span class="stat-label">Récord Personal</span>
+          <span class="stat-value" id="survivalBestStreak" style="color: var(--warning-border);">0</span>
+        </div>
+      </div>
+
+      <div class="question-card" id="survivalCard">
+        <div class="question-text" id="survivalQuestionText">Cargando desafío...</div>
+        <div class="options-grid" id="survivalOptionsContainer"></div>
       </div>
     </section>
 
@@ -383,6 +527,83 @@
       </div>
     </section>
 
+  </div>
+
+  <!-- MODAL: MAPA DE PREGUNTAS (Question Drawer Grid) -->
+  <div class="modal-overlay" id="mapModalOverlay" style="display: none;">
+    <div class="modal-card map-modal-card">
+      <div class="modal-header">
+        <h3>🗺️ Mapa Visual de Preguntas (<span id="mapModalTotalCount">94</span>)</h3>
+        <button id="closeMapModalBtn" class="close-btn" title="Cerrar mapa">✕</button>
+      </div>
+
+      <div class="map-legend">
+        <span class="legend-item"><span class="dot dot-unseen"></span> Sin responder</span>
+        <span class="legend-item"><span class="dot dot-answered"></span> Respondida</span>
+        <span class="legend-item"><span class="dot dot-bookmarked"></span> Con Duda ⭐</span>
+        <span class="legend-item tutor-legend"><span class="dot dot-correct"></span> Acierto</span>
+        <span class="legend-item tutor-legend"><span class="dot dot-wrong"></span> Fallo</span>
+      </div>
+
+      <div class="question-grid" id="questionGridContainer">
+        <!-- 94 botones generados dinámicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIGURADOR DE EXAMEN (Exam Configurator) -->
+  <div class="modal-overlay" id="examConfigModalOverlay" style="display: none;">
+    <div class="modal-card config-modal-card">
+      <div class="modal-header">
+        <h3>⚙️ Configuración del Simulacro de Examen</h3>
+        <button id="closeConfigModalBtn" class="close-btn" title="Cerrar">✕</button>
+      </div>
+
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">
+        Elige la modalidad de examen eliminatorio que deseas realizar. Se aplicará la fórmula FP: <strong>Nota = Aciertos - (Fallos / 3)</strong>.
+      </p>
+
+      <div class="exam-presets-grid">
+        <label class="preset-option active">
+          <input type="radio" name="examPreset" value="marathon" checked>
+          <div class="preset-box">
+            <div class="preset-title">🏆 Maratón Completo</div>
+            <div class="preset-desc">94 preguntas oficiales | 45 minutos</div>
+            <div class="preset-tag">100% Temario</div>
+          </div>
+        </label>
+
+        <label class="preset-option">
+          <input type="radio" name="examPreset" value="standard">
+          <div class="preset-box">
+            <div class="preset-title">📝 Estándar FP DAW/DAM</div>
+            <div class="preset-desc">30 preguntas aleatorias | 25 minutos</div>
+            <div class="preset-tag">Formato Examen Real</div>
+          </div>
+        </label>
+
+        <label class="preset-option">
+          <input type="radio" name="examPreset" value="express">
+          <div class="preset-box">
+            <div class="preset-title">⚡ Test Rápido Express</div>
+            <div class="preset-desc">15 preguntas aleatorias | 12 minutos</div>
+            <div class="preset-tag">Repaso Ágil</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="config-toggle-row">
+        <label class="switch-label">
+          <input type="checkbox" id="shuffleOptionsCheckbox" checked>
+          <span>🔀 Aleatorizar también el orden de las alternativas (A, B, C, D)</span>
+        </label>
+      </div>
+
+      <div class="modal-actions-row">
+        <button id="cancelExamConfigBtn" class="action-btn btn-secondary">Cancelar</button>
+        <button id="startConfiguredExamBtn" class="action-btn btn-primary">🚀 Comenzar Examen Ahora</button>
+      </div>
+    </div>
   </div>
 
   <!-- Scripts -->

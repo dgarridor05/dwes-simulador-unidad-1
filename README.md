@@ -31,12 +31,16 @@ Abarca de forma exhaustiva el **100% de los contenidos de las 20 páginas del do
 
 ## ✨ Características Principales
 
-* **💯 Cobertura Total Línea por Línea**: 94 preguntas diseñadas a partir del temario oficial sin omitir directivas, acrónimos, diagramas de ciclo de vida ni notas al pie.
-* **⚡ 100% Vanilla (Zero Dependencies)**: Construido exclusivamente con HTML5 semántico, CSS3 moderno (Custom Properties, Glassmorphism, CSS Grid/Flexbox) y JavaScript ES6+.
-* **🔊 Audio Sintetizado con Web Audio API**: Feedback sonoro nativo sintetizado proceduralmente en tiempo real (sin archivos de audio externos `.mp3`/`.wav`).
-* **🌓 Modo Oscuro / Claro**: Selector de tema con persistencia en `localStorage`.
-* **💾 Persistencia Local**: Almacenamiento automático del historial de preguntas falladas, marcadores de dudas y preferencias.
-* **📱 Diseño Totalmente Responsivo**: Adaptado para ordenadores de sobremesa, portátiles, tablets y smartphones.
+* **💯 Cobertura Total Línea por Línea**: 94 preguntas extraídas y verificadas a partir del temario oficial sin omitir directivas, acrónimos, diagramas de ciclo de vida ni notas al pie.
+* **📱 Progressive Web App (PWA) 100% Offline**: Incluye `manifest.json` y `sw.js` (Service Worker con estrategia *Cache-First*). Se instala como app nativa en el móvil o PC y funciona sin conexión a Internet.
+* **🔒 Simulacro Oficial Riguroso (Zero Leak)**: En Modo Examen, la selección es neutral (sin colores delatores ni sonidos de acierto/fallo). Permite rectificar respuestas o dejarlas en blanco voluntariamente.
+* **🔍 Revisión Post-Examen Exhaustiva**: Al terminar, visualiza cada una de las preguntas con tu elección, la solución oficial, explicación de distractores y filtro de solo falladas.
+* **🗺️ Mapa Interactivo de Preguntas (1-94)**: Salta instantáneamente a cualquier pregunta con código de colores según su estado (respondida, pendiente, con duda ⭐).
+* **🔀 Aleatorización Anti-Memoria Visual**: Baraja no solo el orden de las preguntas sino también las alternativas (A, B, C, D) para entrenar comprensión real.
+* **🔎 Buscador en Tiempo Real**: Filtra preguntas al instante introduciendo términos como *WSGI*, *EJB*, *mod_php* o *php.ini*.
+* **🔊 Audio Sintetizado con Web Audio API**: Sonido nativo procedural sin dependencias de archivos `.mp3`.
+* **🌓 Modo Oscuro / Claro**: Paleta de alto contraste optimizada para largas sesiones de estudio.
+* **👆 Gestos Táctiles (Swipe)**: Desliza el dedo a izquierda o derecha en tu smartphone para avanzar o retroceder.
 
 ---
 
@@ -44,11 +48,13 @@ Abarca de forma exhaustiva el **100% de los contenidos de las 20 páginas del do
 
 | Modo | Icono | Descripción |
 | :--- | :---: | :--- |
-| **Modo Tutor** | 🎓 | Feedback inmediato pregunta a pregunta. Incluye justificación técnica oficial, número de página exacta del PDF, desglose de por qué falla cada uno de los 3 distractores y advertencias de examen (*"Ojo al examen"*). |
-| **Modo Examen Oficial** | ⏱️ | Simulacro estricto con temporizador de 45 minutos. Aplica penalización por fallo (-0.33) y genera informe académico con nota sobre 10 y veredicto cualitativo. |
-| **Preguntas Trampa** | ⚠️ | Filtro dinámico enfocado exclusivamente en las cuestiones de mayor dificultad técnica (WSGI, directivas de `php.ini`, ciclo SPA vs tradicional, matices de Jakarta EE y CGI). |
+| **Modo Tutor** | 🎓 | Feedback inmediato pregunta a pregunta con justificación técnica oficial, cita de página del PDF, análisis de los 3 distractores y alertas de *"Ojo al examen"*. |
+| **Modo Examen Oficial** | ⏱️ | Simulacro con selección de duración (Express 15 min, Estándar 25 min o Maratón 45 min). Aplica penalización oficial FP ($-0.33$), guarda la sesión ante recargas y genera diagnóstico por bloques. |
+| **Preguntas Trampa** | ⚠️ | Filtro dinámico enfocado exclusivamente en las preguntas de nivel avanzado (WSGI, CGI, directivas de `php.ini`, matices de Jakarta EE y ciclo SPA). |
 | **Bolsa de Fallos** | 🔁 | Repaso inteligente: acumula automáticamente los errores cometidos para reentrenarlos hasta dominarlos al 100%. |
-| **Chuleta del Tema** | 📖 | Tablas de consulta rápida con directivas de configuración de `php.ini`, acrónimos de arquitectura y comparativa de modelos de ejecución. |
+| **Flashcards 3D** | 🎴 | Tarjetas de memoria interactiva con giro 3D sobre conceptos clave, directivas y acrónimos, con autoevaluación (*"Me lo sé"* / *"Repasar"*). |
+| **Muerte Súbita** | ⚡ | Desafío contrarreloj arcade: 15 segundos por pregunta con barra de tiempo dinámica. Un solo fallo termina la partida y registra tu récord personal. |
+| **Chuleta del Tema** | 📖 | Tablas de consulta rápida con directivas de `php.ini`, acrónimos de arquitectura y comparativa de modelos de ejecución. |
 
 ---
 
