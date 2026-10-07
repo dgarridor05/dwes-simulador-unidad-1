@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simulador de examen eliminatorio de DWES Unidad 1: Arquitecturas Web para ciclos formativos de DAW y DAM. Preguntas tipo test, casos trampa y explicaciones técnicas detalladas.">
+  <title>Simulador de Examen DWES - Unidad 1: Arquitecturas Web (DAW / DAM)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Header Principal -->
+    <header class="app-header">
+      <div class="brand-wrapper">
+        <div class="brand-icon">PHP</div>
+        <div class="brand-info">
+          <h1>DWES | Unidad 1: Arquitecturas Web</h1>
+          <p>
+            <span>Preparador Oficial DAW / DAM</span>
+            <span class="badge-tag">Simulador Test Eliminatorio</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- Indicador de Tiempo (Modo Examen) -->
+        <div id="timerDisplay" class="control-btn" style="display: none;">
+          ⏱️ <span id="timeValue">45:00</span>
+        </div>
+
+        <!-- Botón de Sonido -->
+        <button id="toggleAudioBtn" class="control-btn" title="Activar/Desactivar Sonidos FX">
+          🔊 Sonido
+        </button>
+
+        <!-- Botón de Tema (Claro / Oscuro) -->
+        <button id="toggleThemeBtn" class="control-btn" title="Cambiar tema visual">
+          🌓 Tema
+        </button>
+
+        <!-- Botón Reiniciar Estadísticas -->
+        <button id="resetStatsBtn" class="control-btn" title="Reiniciar progreso">
+          🔄 Reiniciar
+        </button>
+      </div>
+    </header>
+
+    <!-- Navegación de Modos -->
+    <nav class="mode-navigation" role="tablist">
+      <button class="mode-tab active" data-mode="tutor" id="tabTutor">
+        🎓 Modo Tutor (Feedback Inmediato)
+      </button>
+      <button class="mode-tab" data-mode="exam" id="tabExam">
+        ⏱️ Modo Examen Oficial (Nota / 10)
+      </button>
+      <button class="mode-tab" data-mode="traps" id="tabTraps">
+        ⚠️ Preguntas Trampa (Nivel Pro)
+      </button>
+      <button class="mode-tab" data-mode="review" id="tabReview">
+        🔁 Bolsa de Fallos (<span id="failedCountBadge">0</span>)
+      </button>
+      <button class="mode-tab" data-mode="glossary" id="tabGlossary">
+        📖 Chuleta y Tablas del Tema
+      </button>
+    </nav>
+
+    <!-- Panel de Filtros (Disponible en modo Tutor y Examen) -->
+    <section class="filter-bar" id="filterBar">
+      <div class="filter-group">
+        <span class="filter-label">Nivel:</span>
+        <button class="chip-filter active" data-level="all">Todos (94)</button>
+        <button class="chip-filter" data-level="basico">Básico</button>
+        <button class="chip-filter" data-level="medio">Intermedio</button>
+        <button class="chip-filter" data-level="avanzado">Avanzado / Trampa</button>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Bloque:</span>
+        <select id="topicFilterSelect" class="chip-filter" style="padding-right: 1.5rem;">
+          <option value="all">Todos los Bloques (1 al 5)</option>
+          <option value="1">1. Páginas Estáticas, Dinámicas, SEO y SPA</option>
+          <option value="2">2. Aplicaciones Web, Capas y MVC</option>
+          <option value="3">3. Tecnologías de Servidor (Jakarta, AMP, CGI, etc.)</option>
+          <option value="4">4. Modelos de Ejecución de Lenguajes</option>
+          <option value="5">5. Entorno PHP, php.ini y XAMPP</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Panel de Estadísticas en Vivo -->
+    <section class="stats-banner" id="statsBanner">
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-label">Progreso Test</div>
+          <div class="stat-value" id="statProgress">0 / 94</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-content">
+          <div class="stat-label">Aciertos</div>
+          <div class="stat-value" id="statCorrect">0</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon red">❌</div>
+        <div class="stat-content">
+          <div class="stat-label">Fallos (-0.33)</div>
+          <div class="stat-value" id="statWrong">0</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon yellow">🎯</div>
+        <div class="stat-content">
+          <div class="stat-label">Nota Estimada</div>
+          <div class="stat-value" id="statGrade">0.00 / 10</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Barra de Progreso Lineal -->
+    <div class="progress-container" id="progressBarContainer">
+      <div class="progress-header">
+        <span id="progressText">Completado: 0%</span>
+        <span id="questionCountText">Pregunta 1 de 40</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <!-- Contenedor Principal de la Pregunta Actual -->
+    <main id="quizMainView">
+      <div class="question-card active-card" id="questionCard">
+        <!-- Metadatos de la Pregunta -->
+        <div class="question-meta">
+          <div class="meta-badges">
+            <span class="badge-level" id="badgeLevel">Básico</span>
+            <span class="badge-topic" id="badgeTopic">Tema 1</span>
+            <span class="badge-page" id="badgePage">Pág. 1-2</span>
+          </div>
+          <button id="bookmarkQuestionBtn" class="control-btn" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+            ⭐ Guardar duda
+          </button>
+        </div>
+
+        <!-- Enunciado de la Pregunta -->
+        <div class="question-text" id="questionText">
+          Cargando pregunta...
+        </div>
+
+        <!-- Opciones A, B, C, D -->
+        <div class="options-grid" id="optionsContainer">
+          <!-- Generado dinámicamente -->
+        </div>
+
+        <!-- Panel de Feedback Exclusivo del Profesor DWES -->
+        <div class="explanation-card" id="explanationCard" style="display: none;">
+          <div class="explanation-title" id="explanationTitle">
+            <!-- Icono y título -->
+          </div>
+          <div class="explanation-text" id="explanationText">
+            <!-- Texto explicativo -->
+          </div>
+          <div class="distractor-breakdown" id="distractorContainer">
+            <div class="distractor-title">Análisis de los distractores (¿por qué fallan?):</div>
+            <div id="distractorList"></div>
+          </div>
+          <div class="trap-box" id="trapBox" style="display: none;">
+            <span>⚠️ <strong>Ojo al examen:</strong> <span id="trapText"></span></span>
+          </div>
+        </div>
+
+        <!-- Barra Inferior de Acciones -->
+        <div class="card-actions">
+          <button id="prevBtn" class="action-btn btn-secondary">
+            ⬅️ Anterior
+          </button>
+          
+          <div style="display: flex; gap: 0.75rem;">
+            <button id="skipBtn" class="action-btn btn-secondary">
+              Saltar
+            </button>
+            <button id="nextBtn" class="action-btn btn-primary">
+              Siguiente ➡️
+            </button>
+            <button id="finishExamBtn" class="action-btn btn-primary" style="display: none; background: #10b981;">
+              🏁 Finalizar y Calificar
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Vista de Resultados Finales (Modal / Informe de Calificación) -->
+    <section class="results-modal" id="resultsModal" style="display: none;">
+      <div class="results-grade-circle" id="gradeCircle">
+        <div class="grade-number" id="finalGradeScore">0.0</div>
+        <div class="grade-max">SOBRE 10</div>
+      </div>
+      <h2 class="results-title" id="finalGradeTitle">¡Examen Finalizado!</h2>
+      <p class="results-verdict" id="finalGradeVerdict">Comprobando resultado...</p>
+
+      <div class="results-stats-grid">
+        <div class="results-stat-box">
+          <div class="stat-label">Aciertos (+1.00)</div>
+          <div class="stat-value" id="finalCorrectCount" style="color: var(--success-border);">0</div>
+        </div>
+        <div class="results-stat-box">
+          <div class="stat-label">Fallos (-0.33)</div>
+          <div class="stat-value" id="finalWrongCount" style="color: var(--danger-border);">0</div>
+        </div>
+        <div class="results-stat-box">
+          <div class="stat-label">En Blanco (0.00)</div>
+          <div class="stat-value" id="finalBlankCount" style="color: var(--text-dim);">0</div>
+        </div>
+        <div class="results-stat-box">
+          <div class="stat-label">Precisión</div>
+          <div class="stat-value" id="finalAccuracy">0%</div>
+        </div>
+      </div>
+
+      <div class="results-actions">
+        <button id="restartExamBtn" class="action-btn btn-primary">
+          🔄 Repetir Examen
+        </button>
+        <button id="reviewFailedOnlyBtn" class="action-btn btn-secondary">
+          ❌ Repasar Solo los Fallos
+        </button>
+        <button id="backToTutorBtn" class="action-btn btn-secondary">
+          🎓 Volver al Modo Tutor
+        </button>
+      </div>
+    </section>
+
+    <!-- Vista de Chuleta y Resumen del Tema -->
+    <section class="glossary-view" id="glossaryView" style="display: none;">
+      <div class="glossary-header">
+        <h2>📖 Guía de Repaso Rápido: Unidad 1 Arquitecturas Web</h2>
+        <p style="color: var(--text-muted);">
+          Síntesis imprescindible de conceptos, tablas de directivas, acrónimos y configuraciones de examen.
+        </p>
+      </div>
+
+      <!-- Tabla 1: Directivas php.ini -->
+      <h3 style="margin-bottom: 0.75rem; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">
+        1. Directivas Clave en <span class="code-pill">php.ini</span>
+      </h3>
+      <div class="table-responsive">
+        <table class="dwes-table">
+          <thead>
+            <tr>
+              <th>Directiva</th>
+              <th>Descripción y Objetivo</th>
+              <th>Valor / Ejemplo Recomendado</th>
+              <th>Detalle de Examen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>short_open_tag</code></td>
+              <td>Habilita o deshabilita delimitadores cortos <code>&lt;?</code> y <code>?&gt;</code>.</td>
+              <td><span class="code-pill">Off</span></td>
+              <td>Evita conflictos con la cabecera estándar de documentos XML (<code>&lt;?xml ...?&gt;</code>).</td>
+            </tr>
+            <tr>
+              <td><code>max_execution_time</code></td>
+              <td>Tiempo máximo en segundos que puede durar la ejecución de un script.</td>
+              <td><span class="code-pill">30</span> (segundos)</td>
+              <td>Evita bloqueos de servidor por bucles infinitos o fallos en el código.</td>
+            </tr>
+            <tr>
+              <td><code>error_reporting</code></td>
+              <td>Determina qué nivel de errores, advertencias y avisos se mostrarán.</td>
+              <td><span class="code-pill">E_ALL & ~E_NOTICE</span></td>
+              <td>Muestra todos los errores menos avisos leves (operador <code>~</code> niega el bit).</td>
+            </tr>
+            <tr>
+              <td><code>file_uploads</code></td>
+              <td>Permite o prohíbe la subida de archivos al servidor mediante HTTP.</td>
+              <td><span class="code-pill">On</span> / <span class="code-pill">Off</span></td>
+              <td>Booleano de activación general para formularios con <code>enctype="multipart/form-data"</code>.</td>
+            </tr>
+            <tr>
+              <td><code>upload_max_filesize</code></td>
+              <td>Límite máximo permitido para el tamaño de cada archivo subido individualmente.</td>
+              <td><span class="code-pill">1M</span>, <span class="code-pill">2M</span>...</td>
+              <td>Si el archivo supera este valor, PHP abortará su recepción.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tabla 2: Acrónimos e Integración de Servidores -->
+      <h3 style="margin: 2rem 0 0.75rem; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">
+        2. Acrónimos y Tecnologías de Servidor
+      </h3>
+      <div class="table-responsive">
+        <table class="dwes-table">
+          <thead>
+            <tr>
+              <th>Sigla / Término</th>
+              <th>Significado Completo</th>
+              <th>Función Principal y Observaciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>XAMPP</strong></td>
+              <td>X (Multiplataforma) + Apache + MySQL/MariaDB + PHP + Perl</td>
+              <td>Paquete integrado todo-en-uno para desplegar un entorno de desarrollo completo.</td>
+            </tr>
+            <tr>
+              <td><strong>CGI</strong></td>
+              <td>Common Gateway Interface</td>
+              <td>Estándar clásico que permite ejecutar programas en cualquier lenguaje (C, Perl, etc.). Inconveniente: crea un nuevo proceso por petición.</td>
+            </tr>
+            <tr>
+              <td><strong>WSGI</strong></td>
+              <td>Web Server Gateway Interface</td>
+              <td>Estándar actual para conectar servidores web (Apache/Nginx como proxy inverso) con aplicaciones Python tras quedar descontinuado <code>mod_python</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>EJB</strong></td>
+              <td>Enterprise JavaBeans (Jakarta EE)</td>
+              <td>Componentes que encapsulan la lógica de negocio en aplicaciones empresariales Java.</td>
+            </tr>
+            <tr>
+              <td><strong>SPA</strong></td>
+              <td>Single Page Application</td>
+              <td>Carga una única vez; no recarga la página completa; actualiza fragmentos con AJAX/REST consumiendo JSON de forma reactiva.</td>
+            </tr>
+            <tr>
+              <td><strong>DocumentRoot</strong></td>
+              <td>Directorio raíz de Apache (<code>htdocs</code>)</td>
+              <td>Ruta base donde Apache busca archivos web. Si falta <code>index.php</code>, se activa el listado de directorios (directory listing).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tabla 3: Modelos de Ejecución -->
+      <h3 style="margin: 2rem 0 0.75rem; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">
+        3. Comparativa de Modelos de Ejecución de Lenguajes
+      </h3>
+      <div class="table-responsive">
+        <table class="dwes-table">
+          <thead>
+            <tr>
+              <th>Modelo</th>
+              <th>Ejemplos</th>
+              <th>Ventajas</th>
+              <th>Inconvenientes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Scripting / Guiones</strong></td>
+              <td>PHP, Python, Perl, ASP clásico</td>
+              <td>Gran portabilidad, texto plano, cambios visibles al instante sin recompilar.</td>
+              <td>Menor rendimiento: cada petición es reinterpretada desde el código fuente.</td>
+            </tr>
+            <tr>
+              <td><strong>Compilados a Código Máquina</strong></td>
+              <td>C, C++</td>
+              <td>Velocidad y rendimiento de ejecución extremos.</td>
+              <td>Poca portabilidad (requiere recompilación por SO) y poca integración web tradicional (crea proceso vía CGI).</td>
+            </tr>
+            <tr>
+              <td><strong>Código Intermedio (Bytecode)</strong></td>
+              <td>Java (Jakarta EE, Servlets), ASP.NET (.NET)</td>
+              <td>Equilibrio rendimiento y portabilidad, reutilización de procesos, optimización mediante compilación en caliente JIT (Just-In-Time).</td>
+              <td>Requiere máquina virtual o plataforma específica (JVM, .NET CLR).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
