@@ -91,6 +91,10 @@ class DWESExamApp {
       examReviewView: document.getElementById('examReviewView'),
       flashcardsView: document.getElementById('flashcardsView'),
       survivalView: document.getElementById('survivalView'),
+      terminalView: document.getElementById('terminalView'),
+      terminalInput: document.getElementById('terminalInput'),
+      terminalSubmitBtn: document.getElementById('terminalSubmitBtn'),
+      terminalOutput: document.getElementById('terminalOutput'),
 
       // Tarjeta de pregunta
       questionCard: document.getElementById('questionCard'),
@@ -183,6 +187,7 @@ class DWESExamApp {
 
   init() {
     this.setupEventListeners();
+    this.setupTerminal();
     this.applyStoredTheme();
     this.updateAudioButtonState();
     this.updateFailedBadge();
@@ -552,12 +557,13 @@ class DWESExamApp {
     // Visibilidad de secciones
     const allViews = [
       this.dom.quizMainView, this.dom.glossaryView, this.dom.resultsModal,
-      this.dom.examReviewView, this.dom.flashcardsView, this.dom.survivalView
+      this.dom.examReviewView, this.dom.flashcardsView, this.dom.survivalView,
+      this.dom.terminalView
     ];
-    allViews.forEach(v => v.style.display = 'none');
+    allViews.forEach(v => { if (v) v.style.display = 'none'; });
 
     // Paneles auxiliares
-    const isSpecialView = ['glossary', 'flashcards', 'survival'].includes(mode);
+    const isSpecialView = ['glossary', 'flashcards', 'survival', 'terminal'].includes(mode);
     this.dom.filterBar.style.display = isSpecialView ? 'none' : 'flex';
     this.dom.statsBanner.style.display = isSpecialView ? 'none' : 'grid';
     this.dom.progressBarContainer.style.display = isSpecialView ? 'none' : 'block';
@@ -570,6 +576,11 @@ class DWESExamApp {
     } else if (mode === 'survival') {
       this.dom.survivalView.style.display = 'block';
       this.startSurvivalChallenge();
+    } else if (mode === 'terminal') {
+      if (this.dom.terminalView) {
+        this.dom.terminalView.style.display = 'block';
+        if (this.dom.terminalInput) this.dom.terminalInput.focus();
+      }
     } else {
       this.dom.quizMainView.style.display = 'block';
       this.applyFilters();
@@ -827,8 +838,8 @@ class DWESExamApp {
       list = list.slice(0, 30);
       this.examTotalSeconds = 25 * 60;
     } else {
-      // marathon: todas las 94
-      this.examTotalSeconds = 45 * 60;
+      // marathon: todas las 147 preguntas oficiales
+      this.examTotalSeconds = 60 * 60;
     }
 
     // Barajado de alternativas (A, B, C, D) anti-memoria visual si está marcado
@@ -999,7 +1010,9 @@ class DWESExamApp {
       2: { name: "Arquitectura en Capas y Patrón MVC", total: 0, correct: 0 },
       3: { name: "Tecnologías y Servidores Web", total: 0, correct: 0 },
       4: { name: "Modelos de Ejecución de Lenguajes", total: 0, correct: 0 },
-      5: { name: "Entorno PHP, php.ini y XAMPP", total: 0, correct: 0 }
+      5: { name: "Entorno PHP, php.ini y XAMPP Inicial", total: 0, correct: 0 },
+      6: { name: "Instalación y Configuración del Servidor XAMPP y Apache", total: 0, correct: 0 },
+      7: { name: "Seguridad y Accesos a phpMyAdmin / MySQL", total: 0, correct: 0 }
     };
 
     this.filteredQuestions.forEach(q => {
@@ -1366,6 +1379,83 @@ class DWESExamApp {
         answer: "En archivos compuestos sólo por PHP puro, NO se incluye la etiqueta de cierre '?>' para evitar envío accidental de espacios en blanco antes de cabeceras HTTP.",
         trap: "Regla obligatoria de examen y estándar PSR-12.",
         page: "Pág. 17"
+      },
+      {
+        topic: "Tema 6: XAMPP y Seguridad",
+        prompt: "¿Por qué el temario advierte que XAMPP NO es adecuado para entornos de producción?",
+        answer: "Porque la seguridad de datos no es su punto fuerte. Viene preconfigurado de forma abierta y permisiva para desarrollo y pruebas locales rápidas.",
+        trap: "XAMPP = desarrollo local, NUNCA servidores de producción.",
+        page: "XAMPP Pág. 1"
+      },
+      {
+        topic: "Tema 6: Windows vs. Linux",
+        prompt: "¿Qué diferencia crítica existe entre Windows y Linux al servir archivos web?",
+        answer: "Linux distingue entre mayúsculas y minúsculas (case-sensitive) en nombres de archivo y rutas, mientras que Windows no.",
+        trap: "Un script que funciona en Windows fallará en Linux con 404 si las mayúsculas no coinciden.",
+        page: "XAMPP Pág. 1"
+      },
+      {
+        topic: "Tema 6: Panel XAMPP",
+        prompt: "¿Por qué es imprescindible ejecutar el panel de control de XAMPP en 'Modo Administrador'?",
+        answer: "Porque el servidor web Apache, por medidas de seguridad del sistema operativo, solamente arranca con privilegios elevados de Administrador.",
+        trap: "Si no se ejecuta como Administrador, el botón Start fallará por permisos.",
+        page: "XAMPP Pág. 3"
+      },
+      {
+        topic: "Tema 6: Directory Listing",
+        prompt: "¿Qué ocurre en Apache si se renombra o elimina index.php dentro de DocumentRoot?",
+        answer: "Se activa el examen de directorios (Directory Listing), mostrando en el navegador la lista completa de archivos y carpetas del disco.",
+        trap: "Examen de directorios = Index of /.",
+        page: "XAMPP Pág. 6"
+      },
+      {
+        topic: "Tema 6: Ficheros de Configuración",
+        prompt: "¿Qué carácter se utiliza para comentar líneas en httpd.conf frente a php.ini?",
+        answer: "En Apache (httpd.conf) se utiliza la almohadilla (#); en PHP (php.ini) se utiliza el punto y coma (;).",
+        trap: "Apache = # | PHP = ;. Clásica trampa en exámenes tipo test.",
+        page: "XAMPP Pág. 7, 9"
+      },
+      {
+        topic: "Tema 6: Apache / Options Indexes",
+        prompt: "¿Qué hace 'Options Indexes' y qué error muestra si se desactiva sin archivo índice?",
+        answer: "Si no existe archivo índice (index.php/html), muestra el contenido de la carpeta. Si estuviera desactivado, Apache devuelve '403 Forbidden'.",
+        trap: "Código de estado devuelto: 403 Forbidden.",
+        page: "XAMPP Pág. 8"
+      },
+      {
+        topic: "Tema 6: Apache / AllowOverride",
+        prompt: "¿Qué diferencia AllowOverride All de AllowOverride None en Apache?",
+        answer: "'None' ignora cualquier archivo .htaccess por rendimiento y seguridad; 'All' permite que los ficheros .htaccess sobreescriban la configuración principal.",
+        trap: "AllowOverride None = ignora .htaccess completamente.",
+        page: "XAMPP Pág. 8"
+      },
+      {
+        topic: "Tema 7: phpMyAdmin / Autenticación",
+        prompt: "¿Cómo se activa la ventana interactiva de login en phpMyAdmin?",
+        answer: "En config.inc.php, cambiando $cfg['Servers'][$i]['auth_type'] = 'config' por $cfg['Servers'][$i]['auth_type'] = 'cookie'.",
+        trap: "'config' entra directo sin login; 'cookie' solicita usuario y contraseña.",
+        page: "Accesos Pág. 1"
+      },
+      {
+        topic: "Tema 7: phpMyAdmin / AllowNoPassword",
+        prompt: "¿Qué directiva obliga a los usuarios a introducir contraseña en phpMyAdmin?",
+        answer: "En config.inc.php, estableciendo: $cfg['Servers'][$i]['AllowNoPassword'] = false. Si se intenta entrar sin clave, el acceso queda prohibido.",
+        trap: "AllowNoPassword = false bloquea logins con contraseña vacía.",
+        page: "Accesos Pág. 1-2"
+      },
+      {
+        topic: "Tema 7: MySQL CLI / mysqladmin",
+        prompt: "¿Qué comandos asignan y cambian respectivamente la contraseña del root en MySQL?",
+        answer: "Primera vez (sin clave): 'mysqladmin -u root password'. Modificación (con clave previa): 'mysqladmin -u root -p password nueva_clave'.",
+        trap: "Sin clave previa: sin flag -p. Con clave previa: con flag -p.",
+        page: "Accesos Pág. 2"
+      },
+      {
+        topic: "Tema 7: Apache / Acceso LAN",
+        prompt: "¿Cómo se permite el acceso a phpMyAdmin desde cualquier equipo de la red local?",
+        answer: "En httpd-xampp.conf, dentro del bloque <Directory 'C:/xampp/phpMyAdmin'>, sustituir 'Require local' por 'Require all granted' y reiniciar Apache.",
+        trap: "Require local = solo mi equipo. Require all granted = toda la red.",
+        page: "Accesos Pág. 3"
       }
     ];
   }
@@ -1576,6 +1666,113 @@ class DWESExamApp {
   applyStoredTheme() {
     const theme = this.loadStorage('dwes_theme', 'dark');
     document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  // --- TERMINAL CLI INTERACTIVA ---
+  setupTerminal() {
+    if (!this.dom.terminalSubmitBtn || !this.dom.terminalInput) return;
+
+    this.dom.terminalSubmitBtn.addEventListener('click', () => {
+      this.executeTerminalInput();
+    });
+
+    this.dom.terminalInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        this.executeTerminalInput();
+      }
+    });
+
+    document.querySelectorAll('.cli-challenge-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const cmd = chip.dataset.cmd;
+        this.dom.terminalInput.value = cmd;
+        this.executeTerminalInput();
+      });
+    });
+  }
+
+  executeTerminalInput() {
+    const rawCmd = this.dom.terminalInput.value.trim();
+    if (!rawCmd) return;
+    this.dom.terminalInput.value = '';
+    this.handleCliCommand(rawCmd);
+  }
+
+  handleCliCommand(cmd) {
+    const output = this.dom.terminalOutput;
+    const appendLine = (text, cls = '') => {
+      const line = document.createElement('div');
+      line.className = `cli-line ${cls}`;
+      line.textContent = text;
+      output.appendChild(line);
+      output.scrollTop = output.scrollHeight;
+    };
+
+    appendLine(`C:\\xampp> ${cmd}`, 'cmd');
+
+    const clean = cmd.toLowerCase().trim();
+
+    if (clean === 'clear' || clean === 'cls') {
+      output.innerHTML = '';
+      appendLine('Consola reiniciada.', 'info');
+      return;
+    }
+
+    if (clean === 'help') {
+      appendLine('Comandos oficiales disponibles en el simulador:', 'info');
+      appendLine('  - mysqladmin -u root password : Poner contraseña inicial a root');
+      appendLine('  - mysqladmin -u root -p password <nueva> : Cambiar contraseña existente');
+      appendLine('  - Alias /aplicacionesclase "C:/xampp/aplicacionesclase/" : Crear Alias en Apache');
+      appendLine('  - Require all granted : Permitir acceso público / red en httpd-xampp.conf');
+      appendLine('  - Require local : Limitar acceso exclusivamente a máquina local');
+      appendLine('  - clear / cls : Limpiar pantalla de consola');
+      return;
+    }
+
+    if (clean === 'mysqladmin -u root password') {
+      appendLine('New password: ********', 'info');
+      appendLine('Confirm new password: ********', 'info');
+      appendLine('[OK] Contraseña asignada con éxito al usuario root. Ahora solo se podrá acceder a MySQL/phpMyAdmin con credenciales válidas.', 'success');
+      this.playSound('correct');
+      return;
+    }
+
+    if (clean.includes('mysqladmin') && clean.includes('-u root -p password')) {
+      appendLine('Enter password (anterior): ********', 'info');
+      appendLine('New password: ********', 'info');
+      appendLine('[OK] Contraseña del usuario root actualizada correctamente tras verificar la clave anterior con el parámetro -p.', 'success');
+      this.playSound('correct');
+      return;
+    }
+
+    if (clean.includes('mysqladmin') && clean.includes('password') && !clean.includes('-p')) {
+      appendLine('[ERROR 1045 (28000)]: Access denied for user \'root\'@\'localhost\' (using password: NO)', 'error');
+      appendLine('💡 Consejo de examen: Como root ya tiene contraseña previa, es obligatorio incluir el flag "-p" (mysqladmin -u root -p password <nueva>) para que te solicite la antigua.', 'info');
+      this.playSound('wrong');
+      return;
+    }
+
+    if (clean.startsWith('alias /aplicacionesclase')) {
+      appendLine('[OK] Sintaxis de Alias válida. Apache mapeará "http://localhost/aplicacionesclase" a la carpeta física "C:/xampp/aplicacionesclase/".', 'success');
+      appendLine('Recuerda configurar el bloque <Directory "C:/xampp/aplicacionesclase/"> con Options Indexes y Require all granted, y reiniciar Apache.', 'info');
+      this.playSound('correct');
+      return;
+    }
+
+    if (clean.includes('require all granted')) {
+      appendLine('[OK] Directiva de control de acceso válida. Acceso concedido a todos los clientes e IPs de la red local.', 'success');
+      this.playSound('correct');
+      return;
+    }
+
+    if (clean.includes('require local')) {
+      appendLine('[OK] Directiva activa. El acceso queda restringido exclusivamente a localhost / 127.0.0.1.', 'info');
+      return;
+    }
+
+    appendLine(`'${cmd}' no se reconoce como un comando o directiva válida de XAMPP.`, 'error');
+    appendLine('Escribe "help" para ver los comandos del temario oficial de examen.', 'info');
+    this.playSound('wrong');
   }
 
   confirmReset() {

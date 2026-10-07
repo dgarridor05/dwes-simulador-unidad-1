@@ -31,13 +31,14 @@ Abarca de forma exhaustiva el **100% de los contenidos de las 20 páginas del do
 
 ## ✨ Características Principales
 
-* **💯 Cobertura Total Línea por Línea**: 94 preguntas extraídas y verificadas a partir del temario oficial sin omitir directivas, acrónimos, diagramas de ciclo de vida ni notas al pie.
-* **📱 Progressive Web App (PWA) 100% Offline**: Incluye `manifest.json` y `sw.js` (Service Worker con estrategia *Cache-First*). Se instala como app nativa en el móvil o PC y funciona sin conexión a Internet.
+* **💯 Cobertura Total Línea por Línea**: 147 preguntas oficiales extraídas y verificadas a partir de los 3 documentos oficiales (Unidad 1 Teoría, Instalación de XAMPP y Configurar Accesos) sin omitir directivas, comandos de consola ni notas al pie.
+* **📱 Progressive Web App (PWA) 100% Offline**: Incluye `manifest.json` y `sw.js` (Service Worker v3 con estrategia *Cache-First*). Se instala como app nativa en el móvil o PC y funciona sin conexión a Internet.
+* **💻 Terminal CLI Simulada Interactiva**: Practica en tiempo real los comandos reales de examen (`mysqladmin`, creación de `Alias` y directivas `Require`) con validación automática y retroalimentación pedagógica.
 * **🔒 Simulacro Oficial Riguroso (Zero Leak)**: En Modo Examen, la selección es neutral (sin colores delatores ni sonidos de acierto/fallo). Permite rectificar respuestas o dejarlas en blanco voluntariamente.
 * **🔍 Revisión Post-Examen Exhaustiva**: Al terminar, visualiza cada una de las preguntas con tu elección, la solución oficial, explicación de distractores y filtro de solo falladas.
-* **🗺️ Mapa Interactivo de Preguntas (1-94)**: Salta instantáneamente a cualquier pregunta con código de colores según su estado (respondida, pendiente, con duda ⭐).
+* **🗺️ Mapa Interactivo de Preguntas (1-147)**: Salta instantáneamente a cualquier pregunta con código de colores según su estado (respondida, pendiente, con duda ⭐).
 * **🔀 Aleatorización Anti-Memoria Visual**: Baraja no solo el orden de las preguntas sino también las alternativas (A, B, C, D) para entrenar comprensión real.
-* **🔎 Buscador en Tiempo Real**: Filtra preguntas al instante introduciendo términos como *WSGI*, *EJB*, *mod_php* o *php.ini*.
+* **🔎 Buscador en Tiempo Real**: Filtra preguntas al instante introduciendo términos como *WSGI*, *EJB*, *mod_php*, *mysqladmin*, *AllowOverride* o *php.ini*.
 * **🔊 Audio Sintetizado con Web Audio API**: Sonido nativo procedural sin dependencias de archivos `.mp3`.
 * **🌓 Modo Oscuro / Claro**: Paleta de alto contraste optimizada para largas sesiones de estudio.
 * **👆 Gestos Táctiles (Swipe)**: Desliza el dedo a izquierda o derecha en tu smartphone para avanzar o retroceder.
@@ -49,26 +50,29 @@ Abarca de forma exhaustiva el **100% de los contenidos de las 20 páginas del do
 | Modo | Icono | Descripción |
 | :--- | :---: | :--- |
 | **Modo Tutor** | 🎓 | Feedback inmediato pregunta a pregunta con justificación técnica oficial, cita de página del PDF, análisis de los 3 distractores y alertas de *"Ojo al examen"*. |
-| **Modo Examen Oficial** | ⏱️ | Simulacro con selección de duración (Express 15 min, Estándar 25 min o Maratón 45 min). Aplica penalización oficial FP ($-0.33$), guarda la sesión ante recargas y genera diagnóstico por bloques. |
-| **Preguntas Trampa** | ⚠️ | Filtro dinámico enfocado exclusivamente en las preguntas de nivel avanzado (WSGI, CGI, directivas de `php.ini`, matices de Jakarta EE y ciclo SPA). |
+| **Modo Examen Oficial** | ⏱️ | Simulacro con selección de duración (Express 15 min, Estándar 25 min o Maratón 60 min con 147 preguntas). Aplica penalización oficial FP ($-0.33$), guarda la sesión ante recargas y genera diagnóstico por bloques. |
+| **Preguntas Trampa** | ⚠️ | Filtro dinámico enfocado exclusivamente en las preguntas de nivel avanzado (WSGI, CGI, directivas de `php.ini`, matices de Jakarta EE, `AllowOverride` y comandos de `mysqladmin`). |
 | **Bolsa de Fallos** | 🔁 | Repaso inteligente: acumula automáticamente los errores cometidos para reentrenarlos hasta dominarlos al 100%. |
-| **Flashcards 3D** | 🎴 | Tarjetas de memoria interactiva con giro 3D sobre conceptos clave, directivas y acrónimos, con autoevaluación (*"Me lo sé"* / *"Repasar"*). |
+| **Flashcards 3D** | 🎴 | 25 tarjetas de memoria interactiva con giro 3D sobre conceptos clave, directivas y acrónimos, con autoevaluación (*"Me lo sé"* / *"Repasar"*). |
 | **Muerte Súbita** | ⚡ | Desafío contrarreloj arcade: 15 segundos por pregunta con barra de tiempo dinámica. Un solo fallo termina la partida y registra tu récord personal. |
-| **Chuleta del Tema** | 📖 | Tablas de consulta rápida con directivas de `php.ini`, acrónimos de arquitectura y comparativa de modelos de ejecución. |
+| **Terminal CLI** | 💻 | Consola simulada interactiva para entrenar los comandos de consola `mysqladmin`, directivas `Alias` y permisos `Require` con feedback inmediato. |
+| **Chuleta del Tema** | 📖 | 7 tablas de consulta rápida con directivas de `php.ini`, acrónimos de arquitectura, directivas de Apache, autenticación en phpMyAdmin y comandos CLI. |
 
 ---
 
-## 📚 Temario Oficial Cubierto (94 Preguntas)
+## 📚 Temario Oficial Cubierto (147 Preguntas)
 
-El banco de preguntas se divide en los 5 bloques temáticos del currículo:
+El banco de preguntas se divide en los 7 bloques temáticos del currículo:
 
 ```mermaid
 graph TD
-    A[Unidad 1: Arquitecturas Web] --> B[Bloque 1: Estáticas, Dinámicas, SEO y SPA<br/>Pág. 1-8 | 30 preguntas]
+    A[DWES Unidad 1 y Entorno de Desarrollo] --> B[Bloque 1: Estáticas, Dinámicas, SEO y SPA<br/>Pág. 1-8 | 30 preguntas]
     A --> C[Bloque 2: Arquitectura 3 Capas y Patrón MVC<br/>Pág. 8-10 | 12 preguntas]
     A --> D[Bloque 3: Tecnologías y Plataformas de Servidor<br/>Pág. 10-15 | 24 preguntas]
     A --> E[Bloque 4: Modelos de Ejecución de Lenguajes<br/>Pág. 15-16 | 7 preguntas]
-    A --> F[Bloque 5: VSCode, PHP, php.ini y XAMPP<br/>Pág. 16-20 | 21 preguntas]
+    A --> F[Bloque 5: VSCode, PHP, php.ini y XAMPP Inicial<br/>Pág. 16-20 | 21 preguntas]
+    A --> G[Bloque 6: Instalación y Configuración Servidor XAMPP y Apache<br/>PDF 2 | 35 preguntas]
+    A --> H[Bloque 7: Seguridad y Accesos phpMyAdmin/MySQL<br/>PDF 3 | 18 preguntas]
 ```
 
 ### 1. Páginas Estáticas, Dinámicas, SEO y SPA (Páginas 1 a 8)
@@ -135,6 +139,38 @@ graph TD
 - Papel de `index.php` y **Listado de directorios (*Directory Listing*)** si se renombra/elimina.
 - Acceso con `localhost` (pantalla *Welcome to XAMPP for Windows 8.1.6*).
 - Estructura del script inicial `holamundo.php`.
+
+### 6. Instalación y Configuración del Servidor XAMPP y Apache (PDF 2)
+- Acrónimo XAMPP detallado: X (Multiplataforma: Windows, Linux, macOS), A (Apache), M (MySQL/MariaDB), P (PHP), P (Perl).
+- Advertencia crítica de desarrollo: Linux es *case-sensitive* (distingue mayúsculas y minúsculas en rutas y archivos); Windows no.
+- Herramientas auxiliares integradas: Mercury Mail (correo), phpMyAdmin (BD), Webalizer (análisis de logs), Apache Tomcat (Java JSP/Servlets), servidores FTP (FileZilla / ProFTPd).
+- Instalación en Windows: Alerta de Firewall (permitir redes privadas, denegar públicas) y ejecución del panel obligatoria en **Modo Administrador**.
+- Puertos estándar: Apache en puerto 80 (443 SSL); MySQL en puerto 3306.
+- Comprobación de loopback `127.0.0.1` vs `localhost`.
+- `DocumentRoot` en `C:\xampp\htdocs`. Comportamiento de `index.php` y **Examen de directorios (*Directory Listing*)** ante renombrado/eliminación.
+- Edición de ficheros de Apache: **Parar el proceso primero (Stop)**. Fichero `httpd.conf` en `C:\xampp\apache\conf\httpd.conf` (comentarios con `#`).
+- Conflicto en Windows 10 con puerto 80 y cambio a `Listen 8080`.
+- Configuración de Alias en `httpd-xampp.conf`: `Alias ruta-URL ruta-carpeta`.
+- Directivas en bloques `<Directory>`:
+  - `Options Indexes`: Listado si falta índice (si está inactivo da *403 Forbidden*).
+  - `Options FollowSymLinks` y `Options MultiViews` (negociación de contenido).
+  - `AllowOverride All` vs `AllowOverride None` (impacto de `.htaccess`).
+  - `Require all granted` (acceso público) vs `Require all denied` (bloqueo total).
+- Parámetros en `C:\xampp\php\php.ini` (comentarios con `;`): `short_open_tag = Off`, `display_errors = On` (desarrollo) vs `Off` (producción) y `error_reporting`.
+- Política inicial con MySQL: En desarrollo local no tocar la contraseña de root para no romper la conexión de phpMyAdmin.
+
+### 7. Configuración de Seguridad y Accesos a phpMyAdmin y MySQL (PDF 3)
+- Acceso inicial por defecto en XAMPP: sin login (`auth_type = 'config'`), diseñado para desarrollo local rápido sin seguridad.
+- Archivo de autenticación: `C:\xampp\phpMyAdmin\config.inc.php`.
+- Habilitar formulario de login interactivo: `$cfg['Servers'][$i]['auth_type'] = 'cookie'`.
+- Obligatoriedad estricta de contraseña: `$cfg['Servers'][$i]['AllowNoPassword'] = false` (evita accesos sin clave con mensaje de prohibición).
+- Comandos de consola `mysqladmin` (en `C:\xampp\mysql\bin` o Shell de XAMPP):
+  - Primera asignación (cuando root NO tiene clave): `mysqladmin -u root password`.
+  - Modificación posterior (cuando root YA tiene clave): `mysqladmin -u root -p password <nueva>` (flag `-p` obligatorio para solicitar la clave previa).
+- Resolución de URLs de Apache frente a `DocumentRoot`.
+- Apertura de acceso a phpMyAdmin en red local (LAN):
+  - Modificar `httpd-xampp.conf` dentro del bloque `<Directory "C:/xampp/phpMyAdmin">`.
+  - Sustituir `Require local` por `Require all granted` y reiniciar Apache.
 
 ---
 

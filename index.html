@@ -27,7 +27,7 @@
           <h1>DWES | Unidad 1: Arquitecturas Web</h1>
           <p>
             <span>Preparador Oficial FP DAW / DAM</span>
-            <span class="badge-tag">94 Preguntas Línea por Línea</span>
+            <span class="badge-tag">147 Preguntas Oficiales Línea por Línea</span>
           </p>
         </div>
       </div>
@@ -80,6 +80,9 @@
       <button class="mode-tab" data-mode="survival" id="tabSurvival" role="tab" aria-selected="false">
         ⚡ Muerte Súbita
       </button>
+      <button class="mode-tab" data-mode="terminal" id="tabTerminal" role="tab" aria-selected="false">
+        💻 Terminal CLI
+      </button>
       <button class="mode-tab" data-mode="glossary" id="tabGlossary" role="tab" aria-selected="false">
         📖 Chuleta del Tema
       </button>
@@ -98,12 +101,14 @@
       <div class="filter-group">
         <span class="filter-label">Bloque:</span>
         <select id="topicFilterSelect" class="chip-filter select-filter" aria-label="Filtrar por bloque temático">
-          <option value="all">Todos los Bloques (1 al 5)</option>
-          <option value="1">1. Páginas Estáticas, Dinámicas, SEO y SPA (Pág. 1-8)</option>
-          <option value="2">2. Aplicaciones Web, Capas y MVC (Pág. 8-10)</option>
-          <option value="3">3. Tecnologías de Servidor: Jakarta, AMP, CGI, ASP.NET (Pág. 10-15)</option>
-          <option value="4">4. Modelos de Ejecución de Lenguajes (Pág. 15-16)</option>
-          <option value="5">5. Entorno PHP, php.ini y XAMPP (Pág. 16-20)</option>
+          <option value="all">Todo el Temario Oficial (147 preguntas)</option>
+          <option value="1">Bloque 1: Páginas Estáticas, Dinámicas, SEO y SPA (Pág. 1-8)</option>
+          <option value="2">Bloque 2: Aplicaciones Web, Capas y MVC (Pág. 8-10)</option>
+          <option value="3">Bloque 3: Tecnologías de Servidor: Jakarta, AMP, CGI, ASP.NET (Pág. 10-15)</option>
+          <option value="4">Bloque 4: Modelos de Ejecución de Lenguajes (Pág. 15-16)</option>
+          <option value="5">Bloque 5: Entorno PHP, php.ini y XAMPP Inicial (Pág. 16-20)</option>
+          <option value="6">Bloque 6: Instalación y Configuración del Servidor XAMPP y Apache</option>
+          <option value="7">Bloque 7: Configuración de Seguridad y Accesos (phpMyAdmin / MySQL)</option>
         </select>
       </div>
 
@@ -525,6 +530,200 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Tabla 4: Rutas y Ficheros Clave del Entorno XAMPP -->
+      <h3 style="margin: 2rem 0 0.75rem; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">
+        4. Rutas y Ficheros Clave del Entorno XAMPP
+      </h3>
+      <div class="table-responsive">
+        <table class="dwes-table">
+          <thead>
+            <tr>
+              <th>Ruta / Archivo</th>
+              <th>Propósito</th>
+              <th>Detalle de Configuración</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>C:\xampp\htdocs</code></td>
+              <td>DocumentRoot principal de Apache</td>
+              <td>Carpeta raíz donde Apache busca las aplicaciones. Si falta <code>index.php</code> se dispara el examen de directorios.</td>
+            </tr>
+            <tr>
+              <td><code>C:\xampp\apache\conf\httpd.conf</code></td>
+              <td>Configuración global de Apache</td>
+              <td>Líneas comentadas con <code>#</code>. Contiene directivas como <code>Listen 80</code> (o 8080) y <code>ServerName localhost:80</code>.</td>
+            </tr>
+            <tr>
+              <td><code>C:\xampp\apache\conf\extra\httpd-xampp.conf</code></td>
+              <td>Configuración de Alias de XAMPP</td>
+              <td>Define alias de Apache (ej. <code>/aplicacionesclase</code> o <code>/phpmyadmin</code>) y permisos con <code>&lt;Directory&gt;</code>.</td>
+            </tr>
+            <tr>
+              <td><code>C:\xampp\php\php.ini</code></td>
+              <td>Configuración del motor PHP</td>
+              <td>Líneas comentadas con <code>;</code>. Directivas: <code>short_open_tag = Off</code>, <code>display_errors = On/Off</code>.</td>
+            </tr>
+            <tr>
+              <td><code>C:\xampp\phpMyAdmin\config.inc.php</code></td>
+              <td>Configuración de phpMyAdmin</td>
+              <td>Autenticación: <code>auth_type = 'cookie'</code> y obligatoriedad: <code>AllowNoPassword = false</code>.</td>
+            </tr>
+            <tr>
+              <td><code>C:\xampp\mysql\bin\mysqladmin.exe</code></td>
+              <td>Herramienta administrativa CLI</td>
+              <td>Permite asignar contraseñas a <code>root</code> desde consola o Shell de XAMPP.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tabla 5: Directivas de Apache en Bloques <Directory> -->
+      <h3 style="margin: 2rem 0 0.75rem; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">
+        5. Matriz de Directivas de Apache en Bloques <code>&lt;Directory&gt;</code>
+      </h3>
+      <div class="table-responsive">
+        <table class="dwes-table">
+          <thead>
+            <tr>
+              <th>Directiva</th>
+              <th>Valores</th>
+              <th>Efecto / Comportamiento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>Options Indexes</code></td>
+              <td>Indexes / -Indexes</td>
+              <td>Si no existe archivo índice (<code>index.php/html</code>), muestra el listado de archivos. Si está inactivo devuelve <strong>403 Forbidden</strong>.</td>
+            </tr>
+            <tr>
+              <td><code>Options FollowSymLinks</code></td>
+              <td>FollowSymLinks</td>
+              <td>Permite a Apache seguir enlaces simbólicos dentro del sistema de archivos del servidor.</td>
+            </tr>
+            <tr>
+              <td><code>Options MultiViews</code></td>
+              <td>MultiViews</td>
+              <td>Habilita la negociación de contenido HTTP (el navegador escoge la mejor variante: <code>.php</code> o <code>.html</code>).</td>
+            </tr>
+            <tr>
+              <td><code>AllowOverride</code></td>
+              <td><code>All</code> / <code>None</code></td>
+              <td><code>All</code>: Permite que archivos <code>.htaccess</code> sobreescriban la configuración. <code>None</code>: Ignora cualquier <code>.htaccess</code> por rendimiento y seguridad.</td>
+            </tr>
+            <tr>
+              <td><code>Require</code></td>
+              <td><code>all granted</code> / <code>local</code> / <code>all denied</code></td>
+              <td><code>all granted</code>: Acceso público irrestricto. <code>local</code>: Solo desde el propio PC (loopback). <code>all denied</code>: Acceso bloqueado.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tabla 6: Seguridad y Autenticación en phpMyAdmin -->
+      <h3 style="margin: 2rem 0 0.75rem; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">
+        6. Configuración de Seguridad en <code>config.inc.php</code> (phpMyAdmin)
+      </h3>
+      <div class="table-responsive">
+        <table class="dwes-table">
+          <thead>
+            <tr>
+              <th>Parámetro</th>
+              <th>Valor Inicial XAMPP</th>
+              <th>Valor Seguro Recomendado</th>
+              <th>Resultado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>$cfg['Servers'][$i]['auth_type']</code></td>
+              <td><code>'config'</code> (acceso directo sin login)</td>
+              <td><code>'cookie'</code></td>
+              <td>Solicita formulario emergente de usuario y contraseña en el navegador.</td>
+            </tr>
+            <tr>
+              <td><code>$cfg['Servers'][$i]['AllowNoPassword']</code></td>
+              <td><code>true</code> (permite entrar sin clave)</td>
+              <td><code>false</code></td>
+              <td>Prohíbe estrictamente el inicio de sesión si el usuario no tiene contraseña asignada.</td>
+            </tr>
+            <tr>
+              <td>Permiso en <code>httpd-xampp.conf</code></td>
+              <td><code>Require local</code></td>
+              <td><code>Require all granted</code></td>
+              <td>Permite administrar la base de datos de forma remota desde cualquier equipo de la red LAN.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tabla 7: Comandos CLI para MySQL -->
+      <h3 style="margin: 2rem 0 0.75rem; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">
+        7. Guía de Comandos CLI <code>mysqladmin</code>
+      </h3>
+      <div class="table-responsive">
+        <table class="dwes-table">
+          <thead>
+            <tr>
+              <th>Operación</th>
+              <th>Comando Exacto</th>
+              <th>Observaciones de Examen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Asignar contraseña inicial a <code>root</code></td>
+              <td><code>mysqladmin -u root password</code></td>
+              <td>Se ejecuta cuando <code>root</code> <strong>NO tiene aún contraseña</strong>. Solicita la nueva clave por consola.</td>
+            </tr>
+            <tr>
+              <td>Cambiar contraseña existente de <code>root</code></td>
+              <td><code>mysqladmin -u root -p password nueva_clave</code></td>
+              <td>El parámetro <code>-p</code> es obligatorio; solicita la contraseña anterior antes de aceptar la nueva.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Vista de Terminal CLI Interactiva -->
+    <section class="terminal-view" id="terminalView" style="display: none;">
+      <div class="terminal-header">
+        <h2>💻 Terminal CLI Simulada: MySQL y Apache XAMPP</h2>
+        <p style="color: var(--text-muted);">
+          Practica los comandos reales del temario de examen. Teclea los comandos solicitados o pulsa en los retos interactivos.
+        </p>
+      </div>
+
+      <div class="cli-challenges-panel">
+        <span class="cli-badge">🎯 Retos Rápidos:</span>
+        <button class="cli-challenge-chip" data-cmd="mysqladmin -u root password">1. Contraseña inicial a root</button>
+        <button class="cli-challenge-chip" data-cmd="mysqladmin -u root -p password miclave">2. Cambiar contraseña con -p</button>
+        <button class="cli-challenge-chip" data-cmd="Alias /aplicacionesclase &quot;C:/xampp/aplicacionesclase/&quot;">3. Crear Alias en Apache</button>
+        <button class="cli-challenge-chip" data-cmd="Require all granted">4. Permitir acceso de red</button>
+      </div>
+
+      <div class="terminal-window">
+        <div class="terminal-topbar">
+          <div class="terminal-dots">
+            <span class="dot-red"></span>
+            <span class="dot-yellow"></span>
+            <span class="dot-green"></span>
+          </div>
+          <div class="terminal-title">XAMPP Shell &mdash; C:\xampp\mysql\bin</div>
+        </div>
+        <div class="terminal-body" id="terminalOutput">
+          <div class="cli-line info">Bienvenido a la consola interactiva de DWES (XAMPP v8.1).</div>
+          <div class="cli-line">Escribe un comando oficial (ej: 'mysqladmin -u root password') o escribe 'help' para ayuda.</div>
+        </div>
+        <div class="terminal-input-row">
+          <span class="cli-prompt">C:\xampp&gt;</span>
+          <input type="text" id="terminalInput" class="cli-input" placeholder="Escribe el comando aquí..." autocomplete="off" spellcheck="false">
+          <button id="terminalSubmitBtn" class="cli-btn">Ejecutar</button>
+        </div>
+      </div>
     </section>
 
   </div>
@@ -568,8 +767,8 @@
           <input type="radio" name="examPreset" value="marathon" checked>
           <div class="preset-box">
             <div class="preset-title">🏆 Maratón Completo</div>
-            <div class="preset-desc">94 preguntas oficiales | 45 minutos</div>
-            <div class="preset-tag">100% Temario</div>
+            <div class="preset-desc">147 preguntas oficiales | 60 minutos</div>
+            <div class="preset-tag">100% Temario Oficial</div>
           </div>
         </label>
 
