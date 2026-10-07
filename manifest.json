@@ -1,7 +1,7 @@
 {
   "name": "Simulador DWES - Unidad 1: Arquitecturas Web",
   "short_name": "DWES Test",
-  "description": "Simulador de examen oficial y tutor interactivo para FP DAW/DAM. 94 preguntas exhaustivas basadas en el temario oficial.",
+  "description": "Simulador de examen oficial y tutor interactivo para FP DAW/DAM. 147 preguntas exhaustivas basadas en el temario oficial.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a0e17",

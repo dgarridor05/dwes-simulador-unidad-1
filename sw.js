@@ -1,5 +1,5 @@
 // Service Worker - DWES Test Master (PWA Offline Cache)
-const CACHE_NAME = 'dwes-simulador-v4';
+const CACHE_NAME = 'dwes-simulador-v5';
 const STATIC_ASSETS = [
   './',
   './index.html',

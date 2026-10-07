@@ -20,6 +20,7 @@ class DWESExamApp {
     this.failedQuestionIds = new Set(this.loadStorage('dwes_failed_ids', []));
     this.bookmarkedIds = new Set(this.loadStorage('dwes_bookmarked_ids', []));
     this.audioEnabled = this.loadStorage('dwes_audio', true);
+    this.shuffleOptionsEnabled = this.loadStorage('dwes_shuffle_options', true);
 
     // Configuración y Temporizador de Examen
     this.examTotalSeconds = 45 * 60;
@@ -50,6 +51,9 @@ class DWESExamApp {
     // Cache de elementos DOM
     this.cacheDomElements();
 
+    // Barajado inicial aleatorio de alternativas
+    this.generateAllRuntimeOptions();
+
     this.init();
   }
 
@@ -63,6 +67,7 @@ class DWESExamApp {
       timeValue: document.getElementById('timeValue'),
       toggleMapBtn: document.getElementById('toggleMapBtn'),
       mapCurrentCount: document.getElementById('mapCurrentCount'),
+      headerRandomBtn: document.getElementById('headerRandomBtn'),
       srAnnouncement: document.getElementById('srAnnouncement'),
 
       // Pestañas
@@ -71,6 +76,9 @@ class DWESExamApp {
       levelChips: document.querySelectorAll('.chip-filter[data-level]'),
       topicSelect: document.getElementById('topicFilterSelect'),
       searchInput: document.getElementById('questionSearchInput'),
+      toggleShuffleOptsBtn: document.getElementById('toggleShuffleOptsBtn'),
+      shuffleOptsStatus: document.getElementById('shuffleOptsStatus'),
+      reshuffleAllBtn: document.getElementById('reshuffleAllBtn'),
 
       // Banners y progreso
       statsBanner: document.getElementById('statsBanner'),
@@ -102,6 +110,7 @@ class DWESExamApp {
       badgeTopic: document.getElementById('badgeTopic'),
       badgePage: document.getElementById('badgePage'),
       cardMapBtn: document.getElementById('cardMapBtn'),
+      reshuffleCurrentCardBtn: document.getElementById('reshuffleCurrentCardBtn'),
       bookmarkBtn: document.getElementById('bookmarkQuestionBtn'),
       questionText: document.getElementById('questionText'),
       optionsContainer: document.getElementById('optionsContainer'),
@@ -190,6 +199,7 @@ class DWESExamApp {
     this.setupTerminal();
     this.applyStoredTheme();
     this.updateAudioButtonState();
+    this.updateShuffleOptionsButtonState();
     this.updateFailedBadge();
     this.updateLevelChipsCounts();
     this.registerServiceWorker();
@@ -335,6 +345,20 @@ class DWESExamApp {
     // Bookmark / Duda
     this.dom.bookmarkBtn.addEventListener('click', () => this.toggleBookmarkCurrent());
 
+    // Controles de Aleatoriedad Dinámica de Respuestas
+    if (this.dom.toggleShuffleOptsBtn) {
+      this.dom.toggleShuffleOptsBtn.addEventListener('click', () => this.toggleShuffleOptions());
+    }
+    if (this.dom.reshuffleAllBtn) {
+      this.dom.reshuffleAllBtn.addEventListener('click', () => this.reshuffleAllOptions());
+    }
+    if (this.dom.headerRandomBtn) {
+      this.dom.headerRandomBtn.addEventListener('click', () => this.jumpToRandomQuestion());
+    }
+    if (this.dom.reshuffleCurrentCardBtn) {
+      this.dom.reshuffleCurrentCardBtn.addEventListener('click', () => this.reshuffleCurrentQuestion());
+    }
+
     // Botones Mapa de preguntas
     this.dom.toggleMapBtn.addEventListener('click', () => this.openMapModal());
     this.dom.cardMapBtn.addEventListener('click', () => this.openMapModal());
@@ -439,6 +463,15 @@ class DWESExamApp {
         this.closeMapModal();
         this.closeExamConfigModal();
       }
+      return;
+    }
+
+    if (key === 'R') {
+      this.reshuffleCurrentQuestion();
+      return;
+    }
+    if (key === 'X' || key === 'Z') {
+      this.jumpToRandomQuestion();
       return;
     }
 
@@ -589,6 +622,123 @@ class DWESExamApp {
     this.playSound('click');
   }
 
+  // --- GESTIÓN DE RESPUESTAS ALEATORIAS (ANTI-MEMORIZACIÓN) ---
+  generateAllRuntimeOptions() {
+    this.allQuestions.forEach(q => {
+      this.generateRuntimeOptions(q);
+    });
+  }
+
+  generateRuntimeOptions(q) {
+    const letters = ['A', 'B', 'C', 'D'];
+    const pool = [...q.options];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = pool[i];
+      pool[i] = pool[j];
+      pool[j] = temp;
+    }
+    q._runtimeOptions = pool.map((opt, idx) => ({
+      ...opt,
+      id: letters[idx],
+      origId: opt.id
+    }));
+    return q._runtimeOptions;
+  }
+
+  getQuestionOptions(q) {
+    if (this.currentMode === 'exam' && q._shuffledOptions) {
+      return q._shuffledOptions;
+    }
+    if (this.shuffleOptionsEnabled) {
+      if (!q._runtimeOptions) {
+        this.generateRuntimeOptions(q);
+      }
+      return q._runtimeOptions;
+    }
+    return q.options;
+  }
+
+  getQuestionDistractors(q, activeOptions) {
+    const wrongOptions = activeOptions.filter(o => !o.isCorrect);
+    return wrongOptions.map(o => {
+      const desc = o.distractor || (q.distractors && (q.distractors[o.origId] || q.distractors[o.id])) || '';
+      return {
+        id: o.id,
+        desc: desc
+      };
+    });
+  }
+
+  toggleShuffleOptions() {
+    this.shuffleOptionsEnabled = !this.shuffleOptionsEnabled;
+    this.saveStorage('dwes_shuffle_options', this.shuffleOptionsEnabled);
+    this.updateShuffleOptionsButtonState();
+    if (this.shuffleOptionsEnabled) {
+      this.generateAllRuntimeOptions();
+    }
+    this.renderQuestion();
+    this.showToast(this.shuffleOptionsEnabled ? '🔀 Respuestas Aleatorias: ACTIVADAS' : '⏸️ Respuestas en Orden Original');
+    this.playSound('click');
+  }
+
+  updateShuffleOptionsButtonState() {
+    if (this.dom.toggleShuffleOptsBtn && this.dom.shuffleOptsStatus) {
+      this.dom.shuffleOptsStatus.textContent = this.shuffleOptionsEnabled ? 'SÍ' : 'NO';
+      this.dom.toggleShuffleOptsBtn.classList.toggle('active-green', this.shuffleOptionsEnabled);
+    }
+  }
+
+  reshuffleAllOptions() {
+    this.allQuestions.forEach(q => {
+      delete q._runtimeOptions;
+    });
+    this.generateAllRuntimeOptions();
+    this.renderQuestion();
+    this.showToast('🎲 ¡Todas las alternativas han sido rebarajadas!');
+    this.playSound('click');
+  }
+
+  reshuffleCurrentQuestion() {
+    const q = this.filteredQuestions[this.currentIndex];
+    if (q) {
+      delete q._runtimeOptions;
+      this.generateRuntimeOptions(q);
+      this.renderQuestion();
+      this.showToast('🔀 Pregunta actual rebarajada');
+      this.playSound('click');
+    }
+  }
+
+  jumpToRandomQuestion() {
+    if (!this.filteredQuestions || this.filteredQuestions.length === 0) return;
+    const len = this.filteredQuestions.length;
+    let nextIdx = Math.floor(Math.random() * len);
+    if (len > 1 && nextIdx === this.currentIndex) {
+      nextIdx = (nextIdx + 1) % len;
+    }
+    this.currentIndex = nextIdx;
+    this.renderQuestion();
+    this.playSound('click');
+    this.showToast(`⚡ Pregunta ${this.currentIndex + 1} de ${len}`);
+  }
+
+  showToast(message) {
+    const old = document.querySelector('.toast-notification');
+    if (old) old.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.innerHTML = `<span>${message}</span>`;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      if (toast && toast.parentNode) {
+        toast.parentNode.removeChild(toast);
+      }
+    }, 2800);
+  }
+
   // --- RENDERIZADO DE PREGUNTA ---
   renderQuestion() {
     if (!this.filteredQuestions || this.filteredQuestions.length === 0) return;
@@ -623,11 +773,8 @@ class DWESExamApp {
     // Enunciado
     this.dom.questionText.textContent = `${this.currentIndex + 1}. ${q.question}`;
 
-    // Obtener opciones a mostrar (orden original o barajadas para el examen)
-    let displayOptions = q.options;
-    if (isExam && q._shuffledOptions) {
-      displayOptions = q._shuffledOptions;
-    }
+    // Obtener opciones a mostrar (dinámicamente aleatorias si está activado)
+    const displayOptions = this.getQuestionOptions(q);
 
     // Renderizar Opciones
     this.dom.optionsContainer.innerHTML = '';
@@ -700,7 +847,9 @@ class DWESExamApp {
 
     // Efecto Sonoro y Anuncio Accesible
     this.playSound(isCorrect ? 'correct' : 'wrong');
-    this.announceSr(isCorrect ? "Respuesta correcta" : `Respuesta incorrecta. La opción correcta era la ${question.options.find(o => o.isCorrect).id}`);
+    const activeOpts = this.getQuestionOptions(question);
+    const correctOpt = activeOpts.find(o => o.isCorrect);
+    this.announceSr(isCorrect ? "Respuesta correcta" : `Respuesta incorrecta. La opción correcta era la ${correctOpt ? correctOpt.id : ''}`);
 
     this.updateStatsDisplay();
     this.renderQuestion();
@@ -739,18 +888,23 @@ class DWESExamApp {
     card.style.display = 'block';
     card.className = `explanation-card ${isCorrect ? 'correct' : 'wrong'}`;
 
+    const activeOpts = this.getQuestionOptions(question);
+    const correctOpt = activeOpts.find(o => o.isCorrect);
+    const correctId = correctOpt ? correctOpt.id : '';
+
     this.dom.explanationTitle.className = `explanation-title ${isCorrect ? 'correct' : 'wrong'}`;
     this.dom.explanationTitle.innerHTML = isCorrect 
       ? `✅ ¡Excelente deducción! Respuesta Correcta (Opción ${answer.optionId})`
-      : `❌ Respuesta Incorrecta (Marcaste ${answer.optionId}). La correcta es la ${question.options.find(o => o.isCorrect).id}`;
+      : `❌ Respuesta Incorrecta (Marcaste ${answer.optionId}). La correcta es la ${correctId}`;
 
     this.dom.explanationText.innerHTML = `<strong>Justificación oficial (${question.page}):</strong> ${question.explanation}`;
 
-    if (question.distractors) {
+    const distList = this.getQuestionDistractors(question, activeOpts);
+    if (distList.length > 0) {
       this.dom.distractorContainer.style.display = 'block';
-      this.dom.distractorList.innerHTML = Object.entries(question.distractors).map(([opt, desc]) => `
+      this.dom.distractorList.innerHTML = distList.map(item => `
         <div class="distractor-item">
-          <strong>Opción ${opt}:</strong> ${desc}
+          <strong>Opción ${item.id}:</strong> ${item.desc}
         </div>
       `).join('');
     } else {
@@ -1529,10 +1683,21 @@ class DWESExamApp {
     this.dom.survivalQuestionText.textContent = randomQ.question;
     this.dom.survivalOptionsContainer.innerHTML = '';
 
-    randomQ.options.forEach(opt => {
+    const letters = ['A', 'B', 'C', 'D'];
+    const pool = [...randomQ.options];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = pool[i];
+      pool[i] = pool[j];
+      pool[j] = temp;
+    }
+
+    pool.forEach((opt, idx) => {
+      const letter = letters[idx];
       const btn = document.createElement('button');
       btn.className = 'option-btn';
-      btn.innerHTML = `<span class="option-letter">${opt.id}</span> <span class="option-content">${opt.text}</span>`;
+      btn.dataset.optionId = letter;
+      btn.innerHTML = `<span class="option-letter">${letter}</span> <span class="option-content">${opt.text}</span>`;
       btn.addEventListener('click', () => this.handleSurvivalAnswer(opt.isCorrect));
       this.dom.survivalOptionsContainer.appendChild(btn);
     });
